@@ -1,8 +1,9 @@
 import math
+import heapq
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass, field
 from data import Node
-from typing import List, Optional
+from typing import List, Optional, Any
 
 
 @dataclass
@@ -27,6 +28,11 @@ class CalcNode:
             self._nexts = [CalcNode(edge.get_opposite_node(self.node)) for edge in self.node.edges]
         return self._nexts
 
+    def __lt__(self, other: Any) -> bool:
+        if not isinstance(other, CalcNode):
+            return NotImplemented
+        return self.fs < other.fs
+
 
 class Searcher(metaclass=ABCMeta):
     def __init__(self, start: Node, goal: Node):
@@ -34,11 +40,12 @@ class Searcher(metaclass=ABCMeta):
         self.goal = goal
         self.open_list: List[CalcNode] = []
         self.close_list: List[CalcNode] = []
+        heapq.heapify(self.open_list)
 
     def calculate(self) -> List[Node]:
         start = CalcNode(self.start)
         start.fs = self._hs(start)
-        self.open_list.append(start)
+        heapq.heappush(self.open_list, start)
         end: Optional[CalcNode] = None
 
         while True:
@@ -46,12 +53,11 @@ class Searcher(metaclass=ABCMeta):
                 print('No route found')
                 return []
 
-            target: CalcNode = min(self.open_list, key=lambda x: x.fs)
+            target: CalcNode = heapq.heappop(self.open_list)
             if target.node == self.goal:
                 end = target
                 break
 
-            self.open_list.remove(target)
             self.close_list.append(target)
 
             target.gs = target.fs - self._hs(target)
@@ -61,21 +67,23 @@ class Searcher(metaclass=ABCMeta):
 
                 opened_candidate = self._find_candidate(self.open_list, candidate)
                 if opened_candidate is not None:
-                    if opened_candidate.fs > fs:
+                    if fs < opened_candidate.fs:
+                        self.open_list.remove(opened_candidate)
                         opened_candidate.fs = fs
                         opened_candidate.parent = target
+                        heapq.heappush(self.open_list, opened_candidate)
                 else:
                     closed_candidate = self._find_candidate(self.close_list, candidate)
                     if closed_candidate is not None:
-                        if closed_candidate.fs > fs:
+                        if fs < closed_candidate.fs:
+                            self.close_list.remove(closed_candidate)
                             closed_candidate.fs = fs
                             closed_candidate.parent = target
-                            self.close_list.remove(closed_candidate)
-                            self.open_list.append(closed_candidate)
+                            heapq.heappush(self.open_list, closed_candidate)
                     else:
                         candidate.fs = fs
                         candidate.parent = target
-                        self.open_list.append(candidate)
+                        heapq.heappush(self.open_list, candidate)
 
         result: List[Node] = []
         while True:
