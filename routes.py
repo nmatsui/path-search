@@ -33,6 +33,12 @@ class CalcNode:
             return NotImplemented
         return self.fs < other.fs
 
+    def __iter__(self):
+        current = self
+        while current is not None:
+            yield current
+            current = current.parent
+
 
 class Searcher(metaclass=ABCMeta):
     def __init__(self, start: Node, goal: Node):
@@ -46,16 +52,15 @@ class Searcher(metaclass=ABCMeta):
         start = CalcNode(self.start)
         start.fs = self._hs(start)
         heapq.heappush(self.open_list, start)
-        end: Optional[CalcNode] = None
+        target: CalcNode
 
         while True:
             if len(self.open_list) == 0:
                 print('No route found')
                 return []
 
-            target: CalcNode = heapq.heappop(self.open_list)
+            target = heapq.heappop(self.open_list)
             if target.node == self.goal:
-                end = target
                 break
 
             self.close_list.append(target)
@@ -85,14 +90,7 @@ class Searcher(metaclass=ABCMeta):
                         candidate.parent = target
                         heapq.heappush(self.open_list, candidate)
 
-        result: List[Node] = []
-        while True:
-            result.insert(0, end.node)
-            if end.parent is None:
-                break
-            end = end.parent
-
-        return result
+        return [li.node for li in reversed(list(target))]
 
     def _cost(self, target: CalcNode, candidate: CalcNode) -> float:
         return math.sqrt((candidate.x - target.x)**2 + (candidate.y - target.y)**2)
