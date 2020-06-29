@@ -5,7 +5,7 @@ import images
 from data import Node, Edge
 from searcher import Astar, Dijkstra
 from searcher2 import Astar2
-import timeit
+import time
 
 from typing import List, Dict, Tuple
 
@@ -34,31 +34,20 @@ ASTAR2_PATH_NAME = 'astar2_path.jpg'
 def main() -> None:
     print('start')
 
-    loop = 1000000
-
-    A1 = Astar(START_NODE, GOAL_NODE)
-    resultA1 = timeit.timeit(lambda: A1.calculate, number=loop)
-    print(f'A1: {resultA1/loop}')
-
-    D1 = Dijkstra(START_NODE, GOAL_NODE)
-    resultD1 = timeit.timeit(lambda: D1.calculate, number=loop)
-    print(f'D1: {resultD1/loop}')
-
-    A2 = Astar2(START_NODE, GOAL_NODE)
-    resultA2 = timeit.timeit(lambda: A2.calculate, number=loop)
-    print(f'A2: {resultA2/loop}')
-
+    a1s = time.time()
     astar_path = Astar(START_NODE, GOAL_NODE).calculate()
+    print(f'save astar path to {ASTAR_PATH_NAME}, time={time.time() - a1s}')
     images.draw_path(ASTAR_PATH_NAME, SIZE, NODES, EDGES, astar_path)
-    print(f'save astar path to {ASTAR_PATH_NAME}')
 
+    d1s = time.time()
     dijkstra_path = Dijkstra(START_NODE, GOAL_NODE).calculate()
+    print(f'save dijkstra path to {DIJKSTRA_PATH_NAME}, time={time.time() - d1s}')
     images.draw_path(DIJKSTRA_PATH_NAME, SIZE, NODES, EDGES, dijkstra_path)
-    print(f'save dijkstra path to {DIJKSTRA_PATH_NAME}')
 
+    a2s = time.time()
     astar_path = Astar2(START_NODE, GOAL_NODE).calculate()
+    print(f'save astar2 path to {ASTAR2_PATH_NAME}, time={time.time() - a2s}')
     images.draw_path(ASTAR2_PATH_NAME, SIZE, NODES, EDGES, astar_path)
-    print(f'save astar2 path to {ASTAR2_PATH_NAME}')
 
 
 if __name__ == '__main__':
