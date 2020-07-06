@@ -4,7 +4,7 @@ import sys
 import images
 from data import Node, Edge
 from searcher import Astar, Dijkstra
-from searcher2 import Astar2
+from fast_astar import Astar2
 import time
 
 from typing import List, Dict, Tuple
@@ -28,7 +28,7 @@ for node in NODES.values():
 GRAPH_NAME = 'graph.jpg'
 ASTAR_PATH_NAME = 'astar_path.jpg'
 DIJKSTRA_PATH_NAME = 'dijkstra_path.jpg'
-ASTAR2_PATH_NAME = 'astar2_path.jpg'
+FAST_ASTAR_NAME = 'fast_astar_path.jpg'
 
 
 def main() -> None:
@@ -46,8 +46,8 @@ def main() -> None:
 
     a2s = time.time()
     astar_path = Astar2(START_NODE, GOAL_NODE).calculate()
-    print(f'save astar2 path to {ASTAR2_PATH_NAME}, time={time.time() - a2s}')
-    images.draw_path(ASTAR2_PATH_NAME, SIZE, NODES, EDGES, astar_path)
+    print(f'save fast astar path to {FAST_ASTAR_NAME}, time={time.time() - a2s}')
+    images.draw_path(FAST_ASTAR_NAME, SIZE, NODES, EDGES, astar_path)
 
 
 if __name__ == '__main__':
