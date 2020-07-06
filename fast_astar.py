@@ -56,7 +56,7 @@ class CalcNode:
             current = current.parent
 
 
-class Astar2:
+class FastAstar:
     def __init__(self, start: Node, goal: Node):
         self.start = start
         self.goal = goal

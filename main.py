@@ -4,7 +4,7 @@ import sys
 import images
 from data import Node, Edge
 from searcher import Astar, Dijkstra
-from fast_astar import Astar2
+from fast_astar import FastAstar
 import time
 
 from typing import List, Dict, Tuple
@@ -53,7 +53,7 @@ def main() -> None:
 
     print('start searching by Fast Astar algorithm')
     a2s = time.time()
-    fast_astar_path = Astar2(start_node, goal_node).calculate()
+    fast_astar_path = FastAstar(start_node, goal_node).calculate()
     print(f'finish searching and save searched path as {FAST_ASTAR_NAME}, time={time.time() - a2s}')
     images.draw_path(FAST_ASTAR_NAME, size, nodes, edges, fast_astar_path)
 
